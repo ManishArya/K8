@@ -8,6 +8,7 @@ const citySchema = new mongoose.Schema({
   },
 });
 
+
 const model = mongoose.model("city", citySchema);
 
 const app = express();
@@ -17,8 +18,8 @@ const connectionString = process.env.connectionString;
 
 connect(connectionString, {
   dbName: process.env.dbName,
-  user: process.env.user,
-  pass: process.env.pass,
+  user: decodeFromBase64(process.env.user),
+  pass: decodeFromBase64(process.env.pass),
   useUnifiedTopology: true,
   useNewUrlParser: true,
 }).then(() => console.info("connected to db"));
@@ -30,3 +31,8 @@ app.get("/api", async (req, res) => {
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`App listening on port ${port}!`));
+
+function decodeFromBase64(input = '') {
+  const buffer = Buffer.from(input, 'base64');
+  return buff.toString('ascii');
+}
