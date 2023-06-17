@@ -34,5 +34,5 @@ app.listen(port, () => console.log(`App listening on port ${port}!`));
 
 function decodeFromBase64(input = '') {
   const buffer = Buffer.from(input, 'base64');
-  return buff.toString('ascii');
+  return buffer.toString('ascii');
 }
