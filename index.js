@@ -15,11 +15,10 @@ const app = express();
 app.set('view engine', 'ejs')
 
 const connectionString = process.env.connectionString;
-
 connect(connectionString, {
   dbName: process.env.dbName,
-  user: decodeFromBase64(process.env.user),
-  pass: decodeFromBase64(process.env.pass),
+  user: process.env.user,
+  pass: process.env.pass,
   useUnifiedTopology: true,
   useNewUrlParser: true,
 }).then(() => console.info("connected to db"));
@@ -32,7 +31,3 @@ app.get("/api", async (req, res) => {
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`App listening on port ${port}!`));
 
-function decodeFromBase64(input = '') {
-  const buffer = Buffer.from(input, 'base64');
-  return buffer.toString('ascii');
-}
