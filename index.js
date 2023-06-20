@@ -8,26 +8,44 @@ const citySchema = new mongoose.Schema({
   },
 });
 
-
 const model = mongoose.model("city", citySchema);
 
-const app = express();
-app.set('view engine', 'ejs')
+async function connectToDB() {
+  try {
+    const connectionString = process.env.connectionString;
+    await connect(connectionString, {
+      dbName: process.env.dbName,
+      user: process.env.user,
+      pass: process.env.pass,
+      useUnifiedTopology: true,
+      useNewUrlParser: true,
+    });
+    console.info("connect to db");
+  } catch (error) {
+    console.error(error);
+  }
+}
 
-const connectionString = process.env.connectionString;
-connect(connectionString, {
-  dbName: process.env.dbName,
-  user: process.env.user,
-  pass: process.env.pass,
-  useUnifiedTopology: true,
-  useNewUrlParser: true,
-}).then(() => console.info("connected to db"));
+async function startApp() {
+  await connectToDB();
 
-app.get("/api", async (req, res) => {
- const cities = await model.find({}, { _id: 0 });
- res.render('index',{ cities})
-});
+  const app = express();
+  app.use(express.json());
+  app.set("view engine", "ejs");
 
-const port = process.env.PORT || 3000;
-app.listen(port, () => console.log(`App listening on port ${port}!`));
+  app.get("/", async (req, res) => {
+    const cities = await model.find({}, { _id: 0 });
+    res.render("index", { cities });
+  });
 
+  app.post("/", async (req, res) => {
+    const cities = req.body.cities;
+    await model.insertMany(cities);
+    res.send();
+  });
+
+  const port = process.env.PORT || 3000;
+  app.listen(port, () => console.info(`App listening on port ${port}!`));
+}
+
+startApp();
