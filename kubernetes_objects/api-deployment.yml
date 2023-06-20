@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myapp
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: myapp
+  template:
+    metadata:
+      labels:
+        app: myapp
+    spec:
+      containers:
+        - name: myapp
+          image: dockersohna/my-repo:web-api-v1.0.0
+          env:
+            - name: connectionString
+              valueFrom:
+                configMapKeyRef:
+                  key: connectionString
+                  name: settings
+            - name: dbName
+              valueFrom:
+                configMapKeyRef:
+                  key: dbName
+                  name: settings
+            - name: user
+              valueFrom:
+                secretKeyRef:
+                  key: user
+                  name: mysecret
+            - name: pass
+              valueFrom:
+                secretKeyRef:
+                  key: pass
+                  name: mysecret
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              memory: 128Mi
+              cpu: 250m
+          ports:
+            - containerPort: 3000

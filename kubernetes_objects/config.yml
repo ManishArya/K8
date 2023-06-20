@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: settings
+data:
+  dbName: test
+  connectionString: mongodb://mongo.default.svc.cluster.local
